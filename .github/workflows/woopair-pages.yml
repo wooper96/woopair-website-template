@@ -46,6 +46,16 @@ jobs:
           persist-credentials: false
       - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
         if: steps.freshness.outputs.current == 'true'
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        if: steps.freshness.outputs.current == 'true'
+        with:
+          node-version: 24
+          cache: npm
+      - name: Build the league website
+        if: steps.freshness.outputs.current == 'true'
+        run: |
+          npm ci --no-audit --no-fund
+          npm run build
       - name: Package website and tournament data
         if: steps.freshness.outputs.current == 'true'
         run: python3 .github/scripts/package-pages.py "$RUNNER_TEMP/league-site"
